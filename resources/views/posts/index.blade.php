@@ -22,7 +22,7 @@
                         <div class="card-author">
                             Автор: {{$post->name}}
                         </div>
-                        <a href="#" class="btn btn-primary">Посмотреть пост</a>
+                        <a href="{{route('post.show',['id'=>$post->post_id])}}" class="btn btn-primary">Посмотреть пост</a>
                     </div>
                 </div>
             </div>
