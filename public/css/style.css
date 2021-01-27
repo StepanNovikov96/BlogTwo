@@ -16,7 +16,7 @@ nav {
     background-repeat: no-repeat;
 }
 
-.card-img, .card-author, .card-date {
+.card-img, .card-author, .card-date, .card-description{
     margin-bottom: 10px;
 }
 
