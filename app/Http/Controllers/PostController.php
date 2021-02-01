@@ -10,6 +10,13 @@ use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth')->except('index','show');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -53,7 +60,7 @@ class PostController extends Controller
         $post->title = $request->title;
         $post->short_title = Str::length($request->title)>30?Str::substr($request->title,0,30)."...":$request->title;
         $post->description = $request->description;
-        $post->author_id = rand(1,4);
+        $post->author_id = \Auth::user()->id;
         if($request->file('img')) {
             $path = Storage::putFile('public',$request->file('img'));
             $url = Storage::url($path);
@@ -84,6 +91,11 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
+
+        if($post->author_id != \Auth::user()->id) {
+            return redirect()->route('post.index')->withErrors('Вы не можете редактировать этот пост');
+        }
+
         return view('posts.edit',compact('post'));
     }
 
@@ -97,6 +109,11 @@ class PostController extends Controller
     public function update(PostRequest $request, $id)
     {
         $post = Post::find($id);
+
+        if($post->author_id != \Auth::user()->id) {
+            return redirect()->route('post.index')->withErrors('Вы не можете редактировать этот пост');
+        }
+
         $post->title = $request->title;
         $post->short_title = Str::length($request->title)>30?Str::substr($request->title,0,30)."...":$request->title;
         $post->description = $request->description;
@@ -119,6 +136,11 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+
+        if($post->author_id != \Auth::user()->id) {
+            return redirect()->route('post.index')->withErrors('Вы не можете удалить этот пост');
+        }
+
         $post->delete();
         return redirect()->route('post.index')->with('success','Пост успешно удален!');
     }
